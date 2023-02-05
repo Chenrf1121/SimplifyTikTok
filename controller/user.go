@@ -1,25 +1,14 @@
 package controller
 
 import (
+	"SimpliftTikTok/dao"
+	"SimpliftTikTok/service"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
-	"sync/atomic"
+	"strconv"
 )
-
-// usersLoginInfo use map to store user info, and key is username+password for demo
-// user data will be cleared every time the server starts
-// test data: username=zhanglei, password=douyin
-var usersLoginInfo = map[string]User{
-	"zhangleidouyin": {
-		Id:            1,
-		Name:          "zhanglei",
-		FollowCount:   10,
-		FollowerCount: 5,
-		IsFollow:      true,
-	},
-}
-
-var userIdSequence = int64(1)
 
 type UserLoginResponse struct {
 	Response
@@ -29,64 +18,86 @@ type UserLoginResponse struct {
 
 type UserResponse struct {
 	Response
-	User User `json:"user"`
+	User service.User `json:"user"`
 }
 
+// Register POST tiktok/user/register/ 用户注册
 func Register(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
 
-	token := username + password
+	usi := service.UserServiceImpl{}
 
-	if _, exist := usersLoginInfo[token]; exist {
+	u := usi.GetTableUserByUsername(username)
+	if username == u.Name {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "User already exist"},
 		})
 	} else {
-		atomic.AddInt64(&userIdSequence, 1)
-		newUser := User{
-			Id:   userIdSequence,
-			Name: username,
+		newUser := dao.TableUser{
+			Name:     username,
+			Password: service.EnCoder(password),
 		}
-		usersLoginInfo[token] = newUser
+		if usi.InsertTableUser(&newUser) != true {
+			println("Insert Data Fail")
+		}
+		u := usi.GetTableUserByUsername(username)
+		token := service.GenerateToken(username)
+		log.Println("注册返回的id: ", u.Id)
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 0},
-			UserId:   userIdSequence,
-			Token:    username + password,
+			UserId:   u.Id,
+			Token:    token,
 		})
 	}
 }
-
 func Login(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
-
-	token := username + password
-
-	if user, exist := usersLoginInfo[token]; exist {
+	usi := service.UserServiceImpl{}
+	u := usi.GetTableUserByUsername(username)
+	if u.Id == 0 {
 		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Response{StatusCode: 0},
-			UserId:   user.Id,
-			Token:    token,
-		})
-	} else {
-		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
+			Response: Response{StatusCode: 2, StatusMsg: "用户名或密码错误，请重新登录"},
 		})
 	}
+	if service.EnCoder(password) != u.Password {
+		c.JSON(http.StatusOK, UserLoginResponse{
+			Response: Response{StatusCode: 2, StatusMsg: "用户名或密码错误，请重新登录"},
+		})
+	}
+	token := service.GenerateToken(username)
+	log.Println("登录返回的id: ", u.Id)
+	c.JSON(http.StatusOK, UserLoginResponse{
+		Response: Response{StatusCode: 0},
+		UserId:   u.Id,
+		Token:    token,
+	})
 }
 
 func UserInfo(c *gin.Context) {
-	token := c.Query("token")
+	//按照抖音"我的信息"界面，需要显示抖音号，抖音名称，获赞，朋友，关注，粉丝等信息
+	userId, _ := c.Get("userId")
+	userid := fmt.Sprintf("%v", userId)
+	id, _ := strconv.ParseInt(userid, 10, 64)
 
-	if user, exist := usersLoginInfo[token]; exist {
-		c.JSON(http.StatusOK, UserResponse{
-			Response: Response{StatusCode: 0},
-			User:     user,
-		})
-	} else {
-		c.JSON(http.StatusOK, UserResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
+	usi := service.UserServiceImpl{
+		service.FollowServiceImpl{},
+		service.LikeServiceImpl{}}
+
+	u := usi.GetTableUserById(id)
+	log.Println("u ========== ", u)
+	if u.Id == 0 {
+		c.JSON(http.StatusOK, UserLoginResponse{
+			Response: Response{StatusCode: 3, StatusMsg: "用户登录过期，请重新登录"},
 		})
 	}
+	//
+	userInfo, _ := usi.GetUserById(u.Id)
+	log.Println("userInfo ========= ", userInfo)
+	c.JSON(http.StatusOK, UserResponse{
+		Response{StatusCode: 0},
+		userInfo,
+	})
+
 }

@@ -1,16 +1,22 @@
 package main
 
 import (
-	"github.com/RaymondCode/simple-demo/service"
+	"SimpliftTikTok/dao"
+	"SimpliftTikTok/router"
+	"SimpliftTikTok/service"
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	go service.RunMessageServer()
-
+	initDevp()
 	r := gin.Default()
 
-	initRouter(r)
-
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	router.InitRouter(r)
+	pprof.Register(r)
+	r.Run(":8090") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+}
+func initDevp() {
+	dao.Init()
 }
