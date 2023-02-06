@@ -54,3 +54,7 @@ func InsertTableUser(tableUser *TableUser) bool {
 	}
 	return true
 }
+
+func FollowerToRedis(userId, targetId int64) {
+	//redis.RdbFollowers.
+}

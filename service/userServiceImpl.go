@@ -74,14 +74,7 @@ func (usi *UserServiceImpl) GetUserById(id int64) (User, error) {
 		FavoriteCount:  0,
 		IsFollow:       false,
 	}
-	tableUser, err := dao.GetTableUserById(id)
-	if err != nil {
-		log.Println("Err:", err.Error())
-		log.Println("User Not Found")
-		return user, err
-	}
-	log.Println("Query User Success")
-	followCount, _ := usi.GetFollowingCnt(id)
+	followCount, err := usi.GetFollowingCnt(id)
 	if err != nil {
 		log.Println("Err:", err.Error())
 	}
@@ -95,7 +88,6 @@ func (usi *UserServiceImpl) GetUserById(id int64) (User, error) {
 	log.Println("err ======== ", err)
 	user = User{
 		Id:             id,
-		Name:           tableUser.Name,
 		FollowCount:    followCount,
 		FollowerCount:  followerCount,
 		TotalFavorited: totalFavorited,

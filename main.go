@@ -2,6 +2,7 @@ package main
 
 import (
 	"SimpliftTikTok/dao"
+	"SimpliftTikTok/middleware/redis"
 	"SimpliftTikTok/router"
 	"SimpliftTikTok/service"
 	"github.com/gin-contrib/pprof"
@@ -11,6 +12,7 @@ import (
 func main() {
 	go service.RunMessageServer()
 	initDevp()
+
 	r := gin.Default()
 
 	router.InitRouter(r)
@@ -19,4 +21,5 @@ func main() {
 }
 func initDevp() {
 	dao.Init()
+	redis.InitRedis()
 }

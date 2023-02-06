@@ -86,7 +86,6 @@ func UserInfo(c *gin.Context) {
 		service.LikeServiceImpl{}}
 
 	u := usi.GetTableUserById(id)
-	log.Println("u ========== ", u)
 	if u.Id == 0 {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 3, StatusMsg: "用户登录过期，请重新登录"},
@@ -94,6 +93,7 @@ func UserInfo(c *gin.Context) {
 	}
 	//
 	userInfo, _ := usi.GetUserById(u.Id)
+	userInfo.Name = u.Name
 	log.Println("userInfo ========= ", userInfo)
 	c.JSON(http.StatusOK, UserResponse{
 		Response{StatusCode: 0},

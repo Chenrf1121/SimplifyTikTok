@@ -1,19 +1,3 @@
-/*
- Navicat Premium Data Transfer
-
- Source Server         : 抖音
- Source Server Type    : MySQL
- Source Server Version : 50650
- Source Host           : 43.138.25.60:3306
- Source Schema         : douyin
-
- Target Server Type    : MySQL
- Target Server Version : 50650
- File Encoding         : 65001
-
- Date: 04/06/2022 23:43:31
-*/
-
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
