@@ -5,8 +5,8 @@ import (
 	"sync"
 )
 
-// TableFollower 对应数据库follower表结构体
-type TableFollower struct {
+// Follow 对应数据库follower表结构体
+type Follow struct {
 	id          int64
 	user_id     int64 //被关注者的id
 	follower_id int64 //粉丝id
@@ -33,7 +33,7 @@ func NewFollowDaoInstance() *FollowerDao {
 // 获取粉丝
 func (*FollowerDao) GetFollowerCnt(userId int64) ([]int64, error) {
 	var ids []int64
-	if err := Db.Debug().Model(TableFollower{}).
+	if err := Db.Debug().Model(Follow{}).
 		Where("user_id = ?", userId).
 		Pluck("follower_id", &ids).Error; err != nil {
 		//没有关注任何人
@@ -51,7 +51,7 @@ func (*FollowerDao) GetFollowerCnt(userId int64) ([]int64, error) {
 // 获取关注
 func (*FollowerDao) GetFollowingCnt(userId int64) ([]int64, error) {
 	var ids []int64
-	if err := Db.Debug().Model(TableFollower{}).
+	if err := Db.Debug().Model(Follow{}).
 		Where("follower_id = ?", userId).
 		Pluck("user_id", &ids).Error; err != nil {
 		//没有关注任何人

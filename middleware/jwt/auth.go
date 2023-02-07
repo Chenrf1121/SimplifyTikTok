@@ -25,6 +25,7 @@ func Auth() gin.HandlerFunc {
 				StatusCode: -1,
 				StatusMsg:  "Unauthorized",
 			})
+			return
 		}
 		auth = strings.Fields(auth)[1]
 		token, err := parseToken(auth)

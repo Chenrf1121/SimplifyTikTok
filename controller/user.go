@@ -20,11 +20,15 @@ type UserResponse struct {
 	Response
 	User service.User `json:"user"`
 }
+type UserBaseInfo struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
 
 // Register POST tiktok/user/register/ 用户注册
 func Register(c *gin.Context) {
-	username := c.Query("username")
-	password := c.Query("password")
+	username := c.PostForm("username")
+	password := c.PostForm("password")
 
 	usi := service.UserServiceImpl{}
 
@@ -52,8 +56,8 @@ func Register(c *gin.Context) {
 	}
 }
 func Login(c *gin.Context) {
-	username := c.Query("username")
-	password := c.Query("password")
+	username := c.PostForm("username")
+	password := c.PostForm("password")
 	usi := service.UserServiceImpl{}
 	u := usi.GetTableUserByUsername(username)
 	if u.Id == 0 {
@@ -77,15 +81,13 @@ func Login(c *gin.Context) {
 
 func UserInfo(c *gin.Context) {
 	//按照抖音"我的信息"界面，需要显示抖音号，抖音名称，获赞，朋友，关注，粉丝等信息
-	userId, _ := c.Get("userId")
-	userid := fmt.Sprintf("%v", userId)
-	id, _ := strconv.ParseInt(userid, 10, 64)
+	userId, _ := strconv.ParseInt(fmt.Sprintf("%v", c.GetString("userId")), 10, 64)
 
 	usi := service.UserServiceImpl{
 		service.FollowServiceImpl{},
 		service.LikeServiceImpl{}}
 
-	u := usi.GetTableUserById(id)
+	u := usi.GetTableUserById(userId)
 	if u.Id == 0 {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 3, StatusMsg: "用户登录过期，请重新登录"},
