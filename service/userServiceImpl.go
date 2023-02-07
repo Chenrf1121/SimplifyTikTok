@@ -68,13 +68,14 @@ func (usi *UserServiceImpl) GetUserById(id int64) (User, error) {
 	user := User{
 		Id:             0,
 		Name:           "",
-		FollowCount:    0,
+		FollowingCount: 0,
 		FollowerCount:  0,
 		TotalFavorited: 0,
 		FavoriteCount:  0,
 		IsFollow:       false,
 	}
-	followCount, err := usi.GetFollowingCnt(id)
+	//获得关注人数
+	followingCount, err := usi.GetFollowingCnt(id)
 	if err != nil {
 		log.Println("Err:", err.Error())
 	}
@@ -88,7 +89,7 @@ func (usi *UserServiceImpl) GetUserById(id int64) (User, error) {
 	log.Println("err ======== ", err)
 	user = User{
 		Id:             id,
-		FollowCount:    followCount,
+		FollowingCount: followingCount,
 		FollowerCount:  followerCount,
 		TotalFavorited: totalFavorited,
 		FavoriteCount:  favoritedCount,

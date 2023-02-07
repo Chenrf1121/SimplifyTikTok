@@ -35,7 +35,7 @@ type UserService interface {
 type User struct {
 	Id             int64  `json:"id,omitempty"`
 	Name           string `json:"name,omitempty"`
-	FollowCount    int64  `json:"follow_count"`              //关注数
+	FollowingCount int64  `json:"follow_count"`              //关注数
 	FollowerCount  int64  `json:"follower_count"`            //粉丝数
 	TotalFavorited int64  `json:"total_favorited,omitempty"` //总共被喜欢了多少次
 	FavoriteCount  int64  `json:"favorite_count,omitempty"`  //点赞数
