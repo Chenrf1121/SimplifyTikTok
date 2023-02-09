@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-//评论，发布等功能
+//有关视频的功能
 
 // 发布视频
 func Publish(c *gin.Context) {
@@ -24,6 +24,12 @@ func Publish(c *gin.Context) {
 		})
 		return
 	}
+	//获取封面，如果封面为空，就默认用视频的第一针作为封面
+	picture, err := c.FormFile("picture")
+	if err != nil {
+		//没用封面
+	}
+
 	if data.Size > 1024*1024*100 {
 		//如果视频超过100M，就无法上传
 		log.Println("视频过大，上传失败")
@@ -37,7 +43,7 @@ func Publish(c *gin.Context) {
 	//封装视频接口
 	videoServiceImpl := GetVideo()
 	//发布视频到ftp
-	err = videoServiceImpl.Publish(userId, data, title)
+	err = videoServiceImpl.Publish(userId, data, title, picture)
 	if err != nil {
 		log.Printf("视频上传至文件服务器失败，%v", err)
 		c.JSON(http.StatusOK, Response{

@@ -4,11 +4,13 @@ go 1.19
 
 require (
 	github.com/RaymondCode/simple-demo v0.0.0-20230109111057-5031aee01508
+	github.com/dutchcoders/goftp v0.0.0-20170301105846-ed59a591ce14
 	github.com/gavv/httpexpect/v2 v2.8.0
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt/v4 v4.4.3
+	github.com/google/uuid v1.2.0
 	github.com/stretchr/testify v1.7.1
 	gorm.io/driver/mysql v1.4.5
 	gorm.io/gorm v1.24.4

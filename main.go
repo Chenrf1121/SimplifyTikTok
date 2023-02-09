@@ -2,6 +2,7 @@ package main
 
 import (
 	"SimpliftTikTok/dao"
+	"SimpliftTikTok/middleware/ftp"
 	"SimpliftTikTok/middleware/redis"
 	"SimpliftTikTok/router"
 	"SimpliftTikTok/service"
@@ -22,4 +23,5 @@ func main() {
 func initDevp() {
 	dao.Init()
 	redis.InitRedis()
+	ftp.InitFTP()
 }

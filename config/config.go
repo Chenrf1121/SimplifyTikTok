@@ -19,3 +19,13 @@ var IP = "127.0.0.1"
 var RedisPort = ":6379"
 var RedisPassword = "123456"
 var ExpireTime = time.Hour * 48 //过期时间
+
+// ftpconfig
+var FtpConfig = IP + ":21"
+var FtpUser = "admin"
+var FtpPwd = "123456"
+var HeartbeatTime = 60
+
+// video
+var PlayUrl = "http://" + IP + "/videos"
+var CoverUrl = "http://" + IP + "/images"
