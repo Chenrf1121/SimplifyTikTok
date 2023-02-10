@@ -15,6 +15,7 @@ func InitFTP() {
 	MyFTP, err = goftp.Connect(config.FtpConfig)
 	if err != nil {
 		log.Printf("获取到FTP链接失败！！！")
+		return
 	}
 	log.Printf("获取到FTP链接成功%v：", MyFTP)
 	//登录

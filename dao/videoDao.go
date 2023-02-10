@@ -3,11 +3,8 @@ package dao
 import (
 	"SimpliftTikTok/config"
 	"SimpliftTikTok/middleware/ftp"
-	"bytes"
-	"fmt"
 	"io"
 	"log"
-	"os/exec"
 	"time"
 )
 
@@ -61,14 +58,8 @@ func Save(authorId int64, videoName, imageName, title string) error {
 	}
 	return nil
 }
-func aa() {
-	filename := "test.mp4"
-	width := 640
-	height := 360
-	cmd := exec.Command("ffmpeg", "-i", filename, "-vframes", "1", "-s", fmt.Sprintf("%dx%d", width, height), "-f", "singlejpeg", "-")
-	var buffer bytes.Buffer
-	cmd.Stdout = &buffer
-	if cmd.Run() != nil {
-		panic("could not generate frame")
-	}
+func FindVideosPublishLatest(n int) ([]Video, error) {
+	videoList := make([]Video, n)
+	Db.Debug().Order("PublishTime").Limit(n).Find(&videoList)
+	return videoList, nil
 }

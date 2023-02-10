@@ -11,6 +11,16 @@ import (
 
 //有关视频的功能
 
+// 刷视频
+func Feed(c *gin.Context) {
+	videoService := GetVideo()
+	videoService.Feed()
+	c.JSON(
+		http.StatusOK,
+		VideoResponse{},
+	)
+}
+
 // 发布视频
 func Publish(c *gin.Context) {
 	userId, _ := strconv.ParseInt(fmt.Sprintf("%v", c.GetString("userId")), 10, 64)

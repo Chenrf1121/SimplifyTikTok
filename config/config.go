@@ -29,3 +29,4 @@ var HeartbeatTime = 60
 // video
 var PlayUrl = "http://" + IP + "/videos"
 var CoverUrl = "http://" + IP + "/images"
+var MaxCacheVideo = 4

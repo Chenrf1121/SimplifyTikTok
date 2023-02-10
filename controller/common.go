@@ -4,7 +4,8 @@ type Response struct {
 	StatusCode int32  `json:"status_code"`
 	StatusMsg  string `json:"status_msg,omitempty"`
 }
-
+type VideoResponse struct {
+}
 type Video struct {
 	Id            int64  `json:"id,omitempty"`
 	Author        User   `json:"author"`
