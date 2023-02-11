@@ -60,6 +60,16 @@ func Save(authorId int64, videoName, imageName, title string) error {
 }
 func FindVideosPublishLatest(n int) ([]Video, error) {
 	videoList := make([]Video, n)
-	Db.Debug().Order("PublishTime").Limit(n).Find(&videoList)
+	Db.Debug().Order("publish_time").Limit(n).Find(&videoList)
+	return videoList, nil
+}
+func FindVideoListbyUserId(userId int64) ([]Video, error) {
+	videoList := make([]Video, config.MaxCacheVideo)
+	result := Db.Debug().Where("author_id = ?", userId).Find(&videoList).Limit(config.MaxCacheVideo)
+	if result.Error != nil {
+		log.Printf("搜索视频数据库失败")
+		return nil, result.Error
+	}
+	log.Printf("数据库的视频长度%v", len(videoList))
 	return videoList, nil
 }

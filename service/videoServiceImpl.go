@@ -28,7 +28,7 @@ func (v VideoServiceImpl) Feed() ([]Video, time.Time, error) {
 	for i, j := range tableVideoes {
 		//通过视频表中playurl和coveurl获得视频和封面在ftp服务器的位置
 		tmpvideo := Video{}
-		tmpvideo.Video = j
+		tmpvideo.TableVideo = j
 		videos[i] = tmpvideo
 	}
 	return videos, time.Now(), nil
@@ -65,4 +65,19 @@ func (v VideoServiceImpl) Publish(userId int64, data *multipart.FileHeader, titl
 	}
 	//上传成功
 	return nil
+}
+
+// 获取用户发布视频列表
+func (v VideoServiceImpl) GetVideoPublishList(userId int64) ([]Video, error) {
+	tablevideo, err := dao.FindVideoListbyUserId(userId)
+	if err != nil {
+		log.Printf("从数据库读数据失败，err = %v", err)
+		return nil, err
+	}
+	video := make([]Video, config.MaxCacheVideo)
+	log.Printf("video len == %v", len(video))
+	for i, j := range tablevideo {
+		video[i].TableVideo = j
+	}
+	return video, nil
 }

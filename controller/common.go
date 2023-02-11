@@ -1,10 +1,14 @@
 package controller
 
+import "SimpliftTikTok/service"
+
 type Response struct {
 	StatusCode int32  `json:"status_code"`
 	StatusMsg  string `json:"status_msg,omitempty"`
 }
 type VideoResponse struct {
+	StatusMsg string `json:"status_msg,omitempty"`
+	VideoList []service.Video
 }
 type Video struct {
 	Id            int64  `json:"id,omitempty"`

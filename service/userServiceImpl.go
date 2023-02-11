@@ -83,7 +83,6 @@ func (usi *UserServiceImpl) GetUserById(id int64) (User, error) {
 	if err != nil {
 		log.Println("Err:", err.Error())
 	}
-	//u := GetLikeService() //解决循环依赖
 	totalFavorited, err := usi.TotalFavourite(id)
 	favoritedCount, err := usi.FavouriteVideoCount(id)
 	log.Println("err ======== ", err)

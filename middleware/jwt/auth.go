@@ -4,7 +4,6 @@ import (
 	"SimpliftTikTok/config"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
-	"log"
 	"net/http"
 	"strings"
 )
@@ -29,7 +28,6 @@ func Auth() gin.HandlerFunc {
 		}
 		auth = strings.Fields(auth)[1]
 		token, err := parseToken(auth)
-
 		if err != nil {
 			context.Abort()
 			context.JSON(http.StatusUnauthorized, Response{
@@ -39,7 +37,6 @@ func Auth() gin.HandlerFunc {
 		} else {
 			println("token 正确")
 		}
-
 		context.Set("userId", (*token)["Id"])
 		context.Next()
 	}
@@ -48,14 +45,13 @@ func Auth() gin.HandlerFunc {
 // AuthWithoutLogin 未登录情况下,若携带token,则解析出用户id并放入context;若未携带,则放入用户id默认值0
 func AuthWithoutLogin() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		auth := context.Query("token")
+		auth := context.Request.Header.Get("Authorization")
 		var userId interface{}
 		if len(auth) == 0 {
-			userId = "0"
+			userId = ""
 		} else {
 			auth = strings.Fields(auth)[1]
 			token, err := parseToken(auth)
-			log.Println("token == ", token)
 			if err != nil {
 				context.Abort()
 				context.JSON(http.StatusUnauthorized, Response{

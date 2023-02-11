@@ -12,16 +12,17 @@ func InitRouter(r *gin.Engine) {
 
 	apiRouter := r.Group("/tiktok")
 
-	// basic apis
-	apiRouter.GET("/feed/", controller.Feed)
+	// 用户注册，登录，用户信息，上传视频，刷视频，显示发布视频
+	apiRouter.GET("/feed/", controller.Feed) //视频观看
 	apiRouter.GET("/user/", jwt.Auth(), controller.UserInfo)
 	apiRouter.POST("/user/register/", controller.Register)
 	apiRouter.POST("/user/login/", controller.Login)
-	apiRouter.POST("/publish/action/", jwt.Auth(), controller.Publish)
-	//apiRouter.GET("/publish/list/", controller.PublishList)
-	//
-	//// extra apis - I
-	//apiRouter.POST("/favorite/action/", controller.FavoriteAction)
+	apiRouter.POST("/publish/", jwt.Auth(), controller.Publish)
+	apiRouter.GET("/publishlist/", jwt.AuthWithoutLogin(), controller.PublishList)
+
+	//用户关注，给视频点赞，评论，收藏
+	//用户关注
+	apiRouter.POST("/follow/", controller.FollowAction)
 	//apiRouter.GET("/favorite/list/", controller.FavoriteList)
 	//apiRouter.POST("/comment/action/", controller.CommentAction)
 	//apiRouter.GET("/comment/list/", controller.CommentList)

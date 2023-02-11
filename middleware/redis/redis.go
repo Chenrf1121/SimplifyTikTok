@@ -4,6 +4,7 @@ import (
 	"SimpliftTikTok/config"
 	"context"
 	"github.com/go-redis/redis/v8"
+	"log"
 )
 
 var Ctx = context.Background()
@@ -38,4 +39,5 @@ func InitRedis() {
 		Password: config.RedisPassword,
 		DB:       4, // 用户抖音号抖音名信息存入 DB4.
 	})
+	log.Printf("redis连接成功！")
 }
