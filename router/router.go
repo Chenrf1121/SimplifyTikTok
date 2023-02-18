@@ -3,13 +3,22 @@ package router
 import (
 	"SimpliftTikTok/controller"
 	"SimpliftTikTok/middleware/jwt"
+	"SimpliftTikTok/middleware/prometheus"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func InitRouter(r *gin.Engine) {
-	// public directory is used to serve static resources
-	r.Static("/static", "./public")
+	gp := prometheus.New(r)
 
+	// public directory is used to serve static resources
+	//	registry := prometheus.NewRegistry()
+	r.GET("/metrics", gin.WrapH(promhttp.HandlerFor(
+		prometheus.Registry, promhttp.HandlerOpts{
+			Registry: prometheus.Registry,
+		})))
+	r.Static("/static", "./public")
+	r.Use(gp.PromeMiddleware())
 	apiRouter := r.Group("/tiktok")
 
 	// 用户注册，登录，用户信息，上传视频，刷视频，显示发布视频
