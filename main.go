@@ -8,6 +8,7 @@ import (
 	"SimpliftTikTok/service"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
+	"log"
 )
 
 func main() {
@@ -18,7 +19,8 @@ func main() {
 
 	router.InitRouter(r)
 	pprof.Register(r)
-	r.Run(":8090") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	err := r.Run(":8090")
+	log.Println("err ======= ", err) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 func initDevp() {
 	dao.Init()

@@ -13,7 +13,8 @@ var OneYear = 365 * 60 * 60 * 24
 
 // IP
 // mysqlIp
-var IP = "127.0.0.1"
+var IP = "10.1.81.15"
+var MysqlPort = ":13306"
 
 // redis
 var RedisPort = ":6379"
