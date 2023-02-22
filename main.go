@@ -19,7 +19,7 @@ func main() {
 
 	router.InitRouter(r)
 	pprof.Register(r)
-	err := r.Run(":8090")
+	err := r.Run("0.0.0.0:8090")
 	log.Println("err ======= ", err) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 func initDevp() {
