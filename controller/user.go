@@ -29,6 +29,14 @@ type UserBaseInfo struct {
 func Register(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
+	fmt.Println("user,pass = ", username, password)
+	if username == "" || password == "" {
+		c.JSON(http.StatusOK, UserLoginResponse{
+			Response{StatusCode: 200, StatusMsg: "输入用户名和密码"},
+			-1, "",
+		})
+		return
+	}
 
 	usi := service.UserServiceImpl{}
 
@@ -64,11 +72,13 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 2, StatusMsg: "用户名或密码错误，请重新登录"},
 		})
+		return
 	}
 	if service.EnCoder(password) != u.Password {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 2, StatusMsg: "用户名或密码错误，请重新登录"},
 		})
+		return
 	}
 	token := service.GenerateToken(username)
 	log.Println("登录返回的id: ", u.Id)

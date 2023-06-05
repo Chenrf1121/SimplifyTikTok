@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>视频发布</title>
+</head>
+<body>
+<h1>视频发布</h1>
+
+<form id="publishForm" enctype="multipart/form-data">
+    <label for="title">标题：</label>
+    <input type="text" id="title" name="title" required><br><br>
+    <label for="picture">封面：</label>
+    <input type="file" id="picture" name="picture"><br><br>
+    <label for="data">视频：</label>
+    <input type="file" id="data" name="data" required><br><br>
+    <button type="submit">发布</button>
+</form>
+
+<script>
+    document.getElementById('publishForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        var form = document.getElementById('publishForm');
+        var formData = new FormData(form);
+
+        fetch('/publish', {
+            method: 'POST',
+            body: formData
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                console.log(data);
+                // 根据后端返回的数据进行处理，如显示成功消息或错误消息
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                // 处理错误情况
+            });
+    });
+</script>
+</body>
+</html>

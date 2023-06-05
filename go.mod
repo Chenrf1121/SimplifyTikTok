@@ -8,6 +8,7 @@ require (
 	github.com/gavv/httpexpect/v2 v2.8.0
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.8.1
+	github.com/giorgisio/goav v0.1.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/google/uuid v1.2.0

@@ -5,6 +5,9 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- Table structure for comments
 -- ----------------------------
 DROP TABLE IF EXISTS `comments`;
+show databases ;
+use tiktok;
+show tables ;
 CREATE TABLE `comments` (
                             `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '评论id，自增主键',
                             `user_id` bigint(20) NOT NULL COMMENT '评论发布用户id',

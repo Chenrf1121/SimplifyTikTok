@@ -5,14 +5,13 @@ import (
 	"SimpliftTikTok/middleware/ftp"
 	"SimpliftTikTok/middleware/redis"
 	"SimpliftTikTok/router"
-	"SimpliftTikTok/service"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"log"
 )
 
 func main() {
-	go service.RunMessageServer()
+	//	go service.RunMessageServer()
 	initDevp()
 
 	r := gin.Default()

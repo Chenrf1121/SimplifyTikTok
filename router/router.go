@@ -10,7 +10,6 @@ import (
 
 func InitRouter(r *gin.Engine) {
 	gp := prometheus.New(r)
-
 	// public directory is used to serve static resources
 	//	registry := prometheus.NewRegistry()
 	r.GET("/metrics", gin.WrapH(promhttp.HandlerFor(
