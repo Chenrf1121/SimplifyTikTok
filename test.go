@@ -1,82 +1,88 @@
 package main
 
 import (
-	"io"
-	"net/http"
-	"os"
-	"os/exec"
-
 	"github.com/gin-gonic/gin"
+	"io"
+	"os"
+	"path/filepath"
 )
 
 func main() {
-	r := gin.Default()
+	router := gin.Default()
+	router.POST("/upload", handleUpload)
+	router.GET("/videos/:filename", handleStream)
+	router.GET("/videos1/:filename", handleStream1)
+	router.Run(":8082")
+}
 
-	r.POST("/upload", func(c *gin.Context) {
-		fileHeader, err := c.FormFile("video")
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
+func handleUpload(c *gin.Context) {
+	file, err := c.FormFile("video")
+	if err != nil {
+		c.JSON(400, gin.H{"error": "Failed to upload file"})
+		return
+	}
 
-		videoFile, err := fileHeader.Open()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": "Failed to open video file",
-			})
-			return
-		}
-		defer videoFile.Close()
+	filename := filepath.Base(file.Filename)
+	dst := filepath.Join("videos", filename)
+	if err := c.SaveUploadedFile(file, dst); err != nil {
+		c.JSON(500, gin.H{"error": "Failed to save file"})
+		return
+	}
 
-		// 创建一个临时文件来保存视频文件
-		tmpVideoFile, err := os.CreateTemp("", "video.*")
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": "Failed to create temporary video file",
-			})
-			return
-		}
-		defer os.Remove(tmpVideoFile.Name())
-		defer tmpVideoFile.Close()
+	c.JSON(200, gin.H{"message": "File uploaded successfully"})
+}
 
-		// 将上传的视频文件保存到临时文件中
-		_, err = io.Copy(tmpVideoFile, videoFile)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": "Failed to save video file",
-			})
-			return
-		}
+func handleStream(c *gin.Context) {
+	filename := c.Param("filename")
+	filePath := filepath.Join("videos", filename)
 
-		// 定义 FFmpeg 命令行参数
-		outputFile := "./output.jpg"
-		ffmpegArgs := []string{
-			"-i", tmpVideoFile.Name(),
-			"-ss", "0", // 提取第一帧
-			"-vframes", "1",
-			"-vf", "scale=320:-1", // 设置缩略图尺寸
-			outputFile,
-		}
+	file, err := os.Open(filePath)
+	if err != nil {
+		c.JSON(404, gin.H{"error": "File not found"})
+		return
+	}
+	defer file.Close()
 
-		// 创建一个 cmd 对象，指定 FFmpeg 命令及参数
-		cmd := exec.Command("ffmpeg", ffmpegArgs...)
+	stat, err := file.Stat()
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Failed to read file"})
+		return
+	}
 
-		// 执行命令
-		err = cmd.Run()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": "Failed to extract thumbnail from video",
-			})
-			return
-		}
+	c.Writer.Header().Set("Content-Type", "video/mp4")
+	c.Writer.Header().Set("Content-Length", string(stat.Size()))
+	c.Writer.Header().Set("Accept-Ranges", "bytes")
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Thumbnail extracted successfully",
-			"image":   outputFile,
-		})
-	})
+	io.Copy(c.Writer, file)
+}
 
-	r.Run(":8081")
+func handleStream1(c *gin.Context) {
+	filename := c.Param("filename")
+	filePath := filepath.Join("videos", filename)
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		c.JSON(404, gin.H{"error": "File not found"})
+		return
+	}
+	defer file.Close()
+
+	stat, err := file.Stat()
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Failed to read file"})
+		return
+	}
+
+	buffer := make([]byte, stat.Size())
+	_, err = file.Read(buffer)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Failed to read file"})
+		return
+	}
+
+	c.Writer.Header().Set("Content-Type", "video/mp4")
+	c.Writer.Header().Set("Content-Length", string(stat.Size()))
+	c.Writer.Header().Set("Accept-Ranges", "bytes")
+
+	c.Writer.Write(buffer)
 }

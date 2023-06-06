@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RTMP Player</title>
+  <script src="https://cdn.jsdelivr.net/npm/flv.js@1.6.2/dist/flv.min.js"></script>
+</head>
+<body>
+<video id="videoPlayer" controls autoplay></video>
+
+<script>
+  if (flvjs.isSupported()) {
+    var videoElement = document.getElementById('videoPlayer');
+    var flvPlayer = flvjs.createPlayer({
+      type: 'rtmp',
+      url: 'YOUR_RTMP_URL_HERE'
+    });
+    flvPlayer.attachMediaElement(videoElement);
+    flvPlayer.load();
+  }
+</script>
+</body>
+</html>
