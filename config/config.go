@@ -28,6 +28,6 @@ var FtpPwd = "123456"
 var HeartbeatTime = 60
 
 // video
-var PlayUrl = "http://" + IP + "/videos"
-var CoverUrl = "http://" + IP + "/images"
+var PlayUrl = "http://" + IP + "/videos/"
+var CoverUrl = "http://" + IP + "/images/"
 var MaxCacheVideo = 4

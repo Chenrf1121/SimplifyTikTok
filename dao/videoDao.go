@@ -48,8 +48,8 @@ func Save(authorId int64, videoName, imageName, title string) error {
 	tmpvideo := Video{
 		AuthorId:    authorId,
 		Title:       title,
-		PlayUrl:     config.PlayUrl + videoName + ".mp4",
-		CoverUrl:    config.CoverUrl + imageName + ".png",
+		PlayUrl:     config.PlayUrl + videoName,
+		CoverUrl:    config.CoverUrl + imageName,
 		PublishTime: time.Now(),
 	}
 	result := Db.Save(&tmpvideo)
