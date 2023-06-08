@@ -4,10 +4,12 @@ import (
 	"SimpliftTikTok/dao"
 	"SimpliftTikTok/service"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
+	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type UserLoginResponse struct {
@@ -63,6 +65,17 @@ func Register(c *gin.Context) {
 		})
 	}
 }
+
+var (
+	maxLoginAttempts = 4
+	lockoutDuration  = time.Minute
+	failedAttempts   = make(map[string]int)
+	lockoutTimes     = make(map[string]time.Time)
+	lockedUsers      = make(map[string]bool)
+	failedIPs        = make(map[string]int)
+	lockedIPs        = make(map[string]time.Time)
+)
+
 func Login(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
@@ -74,12 +87,45 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
+	ip := c.ClientIP()
+	if lockedIPs[ip].After(time.Now()) {
+		c.JSON(http.StatusOK, UserLoginResponse{
+			Response: Response{StatusCode: 2, StatusMsg: "IP地址已被锁定，请稍后再试"},
+		})
+		return
+	}
+	if failedIPs[ip] >= maxLoginAttempts {
+		lockedIPs[ip] = time.Now().Add(24 * time.Hour)
+		c.JSON(http.StatusOK, UserLoginResponse{
+			Response: Response{StatusCode: 2, StatusMsg: "IP地址已被锁定，请稍后再试"},
+		})
+		return
+	}
+	if lockedUsers[username] {
+		c.JSON(http.StatusOK, UserLoginResponse{
+			Response: Response{StatusCode: 2, StatusMsg: "账号已被锁定，请稍后再试"},
+		})
+		return
+	}
 	if service.EnCoder(password) != u.Password {
+		failedAttempts[username]++
+		failedIPs[ip]++
+		if failedAttempts[username] >= maxLoginAttempts {
+			lockedUsers[username] = true
+			lockoutTimes[username] = time.Now()
+		}
+		if failedIPs[ip] >= maxLoginAttempts {
+			lockedIPs[ip] = time.Now().Add(24 * time.Hour)
+		}
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 2, StatusMsg: "用户名或密码错误，请重新登录"},
 		})
 		return
 	}
+	failedAttempts[username] = 0
+	failedIPs[ip] = 0
+	lockedUsers[username] = false
+	lockedIPs[ip] = time.Time{}
 	token := service.GenerateToken(username)
 	log.Println("登录返回的id: ", u.Id)
 	c.JSON(http.StatusOK, UserLoginResponse{
@@ -87,6 +133,25 @@ func Login(c *gin.Context) {
 		UserId:   u.Id,
 		Token:    token,
 	})
+}
+
+func init() {
+	go func() {
+		for {
+			time.Sleep(time.Minute)
+			for username, t := range lockoutTimes {
+				if time.Since(t) > lockoutDuration {
+					failedAttempts[username] = 0
+					lockedUsers[username] = false
+				}
+			}
+			for ip, t := range lockedIPs {
+				if t.Before(time.Now()) {
+					delete(lockedIPs, ip)
+				}
+			}
+		}
+	}()
 }
 
 func UserInfo(c *gin.Context) {

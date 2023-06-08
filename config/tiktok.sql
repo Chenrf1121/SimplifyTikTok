@@ -63,18 +63,33 @@ CREATE TABLE `users` (
 -- ----------------------------
 -- Table structure for videos
 -- ----------------------------
-DROP TABLE IF EXISTS `videos`;
-CREATE TABLE `videos` (
+DROP TABLE IF EXISTS `meta_videos`;
+CREATE TABLE `meta_videos` (
                           `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增主键，视频唯一id',
+                          `video_id` bigint(20) NOT NULL COMMENT '视频id',
                           `author_id` bigint(20) NOT NULL COMMENT '视频作者id',
                           `play_url` varchar(255) NOT NULL COMMENT '播放url',
                           `cover_url` varchar(255) NOT NULL COMMENT '封面url',
                           `publish_time` datetime NOT NULL COMMENT '发布时间戳',
                           `title` varchar(255) DEFAULT NULL COMMENT '视频名称',
                           PRIMARY KEY (`id`),
+                          unique key(`video_id`),
                           KEY `time` (`publish_time`) USING BTREE,
                           KEY `author` (`author_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8 COMMENT='\r\n视频表';
+
+drop table if exists `dynamic_videos`;
+create table `dynamic_videos`(
+    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增主键，视频唯一id',
+    `video_id` bigint(20) NOT NULL COMMENT '视频id',
+    `like_num` int not null default 0 COMMENT '点赞数',
+    `favour_num` int not null default 0 COMMENT '收藏数',
+    `share_num` int not null default 0 COMMENT '转发数',
+    `comment_num` int not null default 0 COMMENT '评论数',
+    PRIMARY KEY (`id`),
+    unique index idx_video_id(video_id),
+    constraint foreign key (video_id) references meta_videos(video_id)
+)ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8 COMMENT='\r\n视频动态属性表';
 
 -- ----------------------------
 -- Procedure structure for addFollowRelation
@@ -122,3 +137,5 @@ END
 delimiter ;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+

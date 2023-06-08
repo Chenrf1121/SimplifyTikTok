@@ -18,6 +18,8 @@ import (
 
 // 刷视频
 func Feed(c *gin.Context) {
+	video_id_str := c.DefaultQuery("video_id", "-1")
+	video_id, err := strconv.ParseInt(video_id_str, 10, 64)
 	videoService := GetVideo()
 	videos, latestTime, err := videoService.Feed()
 	if err != nil {
@@ -28,6 +30,10 @@ func Feed(c *gin.Context) {
 				"视频读取错误",
 			})
 		return
+	}
+	if video_id != -1 {
+		//查视频
+		videoService.GetVideo(video_id)
 	}
 	c.JSON(
 		http.StatusOK,

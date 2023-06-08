@@ -32,14 +32,15 @@ func InitRouter(r *gin.Engine) {
 	//用户关注
 	apiRouter.POST("/follow/", controller.FollowAction)
 	//apiRouter.GET("/favorite/list/", controller.FavoriteList)
-	//apiRouter.POST("/comment/action/", controller.CommentAction)
+	//评论
+	apiRouter.POST("/comment/:video_id/action/", controller.AddVideoComment)
+	apiRouter.POST("/videos/:video_id/like", controller.LikeVideo)
+	apiRouter.POST("/videos/:video_id/favorite", controller.FavoriteVideo)
+	apiRouter.POST("/videos/:video_id/share", controller.ShareVideo)
+	apiRouter.POST("/comments/:comment_id/reply", controller.ReplyToComment)
+	apiRouter.POST("/comments/:comment_id/like", controller.LikeComment)
+	apiRouter.GET("/comments/:comment_id/replies", controller.GetReplies)
+	apiRouter.GET("/videos/:video_id/comments", controller.GetVideoComments)
 	//apiRouter.GET("/comment/list/", controller.CommentList)
-	//
-	//// extra apis - II
-	//apiRouter.POST("/relation/action/", controller.RelationAction)
-	//apiRouter.GET("/relation/follow/list/", controller.FollowList)
-	//apiRouter.GET("/relation/follower/list/", controller.FollowerList)
-	//apiRouter.GET("/relation/friend/list/", controller.FriendList)
-	//apiRouter.GET("/message/chat/", controller.MessageChat)
-	//apiRouter.POST("/message/action/", controller.MessageAction)
+
 }

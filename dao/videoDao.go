@@ -2,51 +2,32 @@ package dao
 
 import (
 	"SimpliftTikTok/config"
-	"SimpliftTikTok/middleware/ftp"
-	"io"
 	"log"
 	"time"
 )
 
-type Video struct {
+type MetaVideo struct {
 	Id          int64 `json:"id"`
 	AuthorId    int64
+	VideoId     int64
 	Title       string    `json:"title"`
 	PlayUrl     string    `json:"playUrl"`
 	CoverUrl    string    `json:"coverUrl"`
 	PublishTime time.Time `json:"publishTime"`
 }
-
-// VideoFTP
-// 通过ftp将视频传入服务器
-func VideoFTP(file io.Reader, videoName string) error {
-	//进入视频地址
-	err := ftp.MyFTP.Cwd("video")
-	if err != nil {
-		ftp.MyFTP.Mkd("video")
-	}
-	err = ftp.MyFTP.Stor(videoName+".mp4", file)
-	if err != nil {
-		log.Printf("上传至服务器失败,err = %v", err)
-	}
-	return nil
-}
-func ImageFTP(file io.Reader, imageName string) error {
-	//进入视频地址
-	err := ftp.MyFTP.Cwd("image")
-	if err != nil {
-		ftp.MyFTP.Mkd("image")
-	}
-	err = ftp.MyFTP.Stor(imageName+".jpg", file)
-	if err != nil {
-		log.Printf("封面上传至服务器失败,err = %v", err)
-	}
-	return nil
+type DynamicVideo struct {
+	Id         int64 `json:"id"`
+	VideoId    int64
+	LikeNum    int
+	FavourNum  int
+	CommentNum int
+	ShareNum   int
 }
 
-func Save(authorId int64, videoName, imageName, title string) error {
-	tmpvideo := Video{
+func Save(authorId, videoId int64, videoName, imageName, title string) error {
+	tmpvideo := MetaVideo{
 		AuthorId:    authorId,
+		VideoId:     videoId,
 		Title:       title,
 		PlayUrl:     config.PlayUrl + videoName,
 		CoverUrl:    config.CoverUrl + imageName,
@@ -58,13 +39,26 @@ func Save(authorId int64, videoName, imageName, title string) error {
 	}
 	return nil
 }
-func FindVideosPublishLatest(n int) ([]Video, error) {
-	videoList := make([]Video, n)
+func SaveDynamicVideo(videoId int64) error {
+	tmpvideo := DynamicVideo{
+		VideoId: videoId,
+	}
+	result := Db.Save(&tmpvideo)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+
+}
+func FindVideosPublishLatest(n int) ([]MetaVideo, error) {
+	videoList := make([]MetaVideo, n)
 	Db.Debug().Order("publish_time").Limit(n).Find(&videoList)
 	return videoList, nil
 }
-func FindVideoListbyUserId(userId int64) ([]Video, error) {
-	videoList := make([]Video, config.MaxCacheVideo)
+
+// 根据用户id查所有视频
+func FindVideoListbyUserId(userId int64) ([]MetaVideo, error) {
+	videoList := make([]MetaVideo, config.MaxCacheVideo)
 	result := Db.Debug().Where("author_id = ?", userId).Find(&videoList).Limit(config.MaxCacheVideo)
 	if result.Error != nil {
 		log.Printf("搜索视频数据库失败")
@@ -72,4 +66,15 @@ func FindVideoListbyUserId(userId int64) ([]Video, error) {
 	}
 	log.Printf("数据库的视频长度%v", len(videoList))
 	return videoList, nil
+}
+
+// 根据videoid查视频
+func FindVideobyVideoID(videoId int64) (MetaVideo, error) {
+	targetVideo := MetaVideo{}
+	result := Db.Debug().Where("VideoID = ?", videoId).Find(&targetVideo)
+	if result.Error != nil {
+		log.Printf("搜索视频号为：%v 失败", videoId)
+		return targetVideo, result.Error
+	}
+	return targetVideo, nil
 }
