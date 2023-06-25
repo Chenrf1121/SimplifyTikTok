@@ -52,19 +52,21 @@ func SaveDynamicVideo(videoId int64) error {
 }
 func FindVideosPublishLatest(n int) ([]MetaVideo, error) {
 	videoList := make([]MetaVideo, n)
-	Db.Debug().Order("publish_time").Limit(n).Find(&videoList)
+	Db.Debug().Order("publish_time DESC").Limit(n).Find(&videoList)
 	return videoList, nil
 }
 
 // 根据用户id查所有视频
 func FindVideoListbyUserId(userId int64) ([]MetaVideo, error) {
 	videoList := make([]MetaVideo, config.MaxCacheVideo)
-	result := Db.Debug().Where("author_id = ?", userId).Find(&videoList).Limit(config.MaxCacheVideo)
+	result := Db.Debug().Where("author_id = ?", userId).Order("publish_time DESC").Find(&videoList).Limit(config.MaxCacheVideo)
+	for i := range videoList {
+		log.Println(videoList[i])
+	}
 	if result.Error != nil {
 		log.Printf("搜索视频数据库失败")
 		return nil, result.Error
 	}
-	log.Printf("数据库的视频长度%v", len(videoList))
 	return videoList, nil
 }
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"SimpliftTikTok/config"
 	"SimpliftTikTok/dao"
 	"SimpliftTikTok/middleware/ftp"
 	"SimpliftTikTok/middleware/redis"
@@ -8,6 +9,7 @@ import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"log"
+	"os"
 )
 
 func main() {
@@ -22,6 +24,8 @@ func main() {
 	log.Println("err ======= ", err) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 func initDevp() {
+	config.Pwd, _ = os.Getwd()
+	log.Println("PWD = ", config.Pwd)
 	dao.Init()
 	redis.InitRedis()
 	ftp.InitFTP()

@@ -27,10 +27,11 @@ func (v VideoServiceImpl) GetVideo(video_id int64) (Video, error) {
 
 // 刷视频
 func (v VideoServiceImpl) Feed() ([]Video, time.Time, error) {
-	//从文件服务器读视频
-	videos := make([]Video, config.MaxCacheVideo)
+
 	//从数据库得到视频信息
 	tableVideoes, err := dao.FindVideosPublishLatest(config.MaxCacheVideo)
+	//从文件服务器读视频
+	videos := make([]Video, len(tableVideoes))
 	if err != nil {
 		log.Println("从数据库读取视频失败")
 		return nil, time.Now(), err
@@ -46,7 +47,6 @@ func (v VideoServiceImpl) Feed() ([]Video, time.Time, error) {
 
 // 视频上传
 func (v VideoServiceImpl) Publish(userId int64, videoname, imagename, title string) error {
-	//	log.Printf("%v publish video", userId)
 	videoUuid := uuid.New()
 	videoId := int64(videoUuid.ID())
 	err := dao.Save(userId, videoId, videoname, imagename, title)
@@ -71,8 +71,8 @@ func (v VideoServiceImpl) GetVideoPublishList(userId int64) ([]Video, error) {
 		return nil, err
 	}
 	video := make([]Video, config.MaxCacheVideo)
-	for i, j := range tablevideo {
-		video[i].MetaVideo = j
+	for i := range tablevideo {
+		video[i].MetaVideo = tablevideo[i]
 	}
 
 	return video, nil

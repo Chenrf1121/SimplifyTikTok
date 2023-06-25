@@ -6,15 +6,14 @@ require (
 	github.com/RaymondCode/simple-demo v0.0.0-20230109111057-5031aee01508
 	github.com/dutchcoders/goftp v0.0.0-20170301105846-ed59a591ce14
 	github.com/gavv/httpexpect/v2 v2.8.0
+	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/google/uuid v1.2.0
-	github.com/gorilla/mux v1.8.0
-	github.com/gorilla/websocket v1.5.0
 	github.com/prometheus/client_golang v1.14.0
-	github.com/stretchr/testify v1.7.1
+	github.com/stretchr/testify v1.8.0
 	gorm.io/driver/mysql v1.4.5
 	gorm.io/gorm v1.24.4
 )
@@ -35,6 +34,7 @@ require (
 	github.com/goccy/go-json v0.9.7 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
+	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/imkira/go-interpol v1.1.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
@@ -68,6 +68,6 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 	moul.io/http2curl/v2 v2.3.0 // indirect
 )

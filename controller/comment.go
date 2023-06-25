@@ -1,12 +1,14 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"strconv"
 )
 
-//给视频评论
+// 给视频评论
 func AddVideoComment(c *gin.Context) {
 
 }
@@ -16,9 +18,9 @@ func LikeVideo(c *gin.Context) {
 	// Parse request data
 	videoID := c.Param("video_id")
 
+	userId, _ := strconv.ParseInt(fmt.Sprintf("%v", c.GetString("userId")), 10, 64)
 	// Update the video's like count in the database
-	// ...
-
+	log.Println(userId)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Video liked successfully" + videoID,
 	})

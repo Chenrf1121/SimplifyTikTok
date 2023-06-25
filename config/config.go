@@ -2,6 +2,9 @@ package config
 
 import "time"
 
+// pwd
+var Pwd = ""
+
 // Secret 密钥
 var Secret = "TikTok"
 
@@ -13,7 +16,7 @@ var OneYear = 365 * 60 * 60 * 24
 
 // IP
 // mysqlIp
-var IP = "10.252.45.17"
+var IP = "127.0.0.1"
 var MysqlPort = ":3306"
 
 // redis
@@ -30,4 +33,4 @@ var HeartbeatTime = 60
 // video
 var PlayUrl = "http://" + IP + "/videos/"
 var CoverUrl = "http://" + IP + "/images/"
-var MaxCacheVideo = 4
+var MaxCacheVideo = 8

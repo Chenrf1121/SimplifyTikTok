@@ -12,6 +12,7 @@ func InitRouter(r *gin.Engine) {
 	gp := prometheus.New(r)
 	// public directory is used to serve static resources
 	//	registry := prometheus.NewRegistry()
+	r.LoadHTMLGlob("templates/*.html")
 	r.GET("/metrics", gin.WrapH(promhttp.HandlerFor(
 		prometheus.Registry, promhttp.HandlerOpts{
 			Registry: prometheus.Registry,
@@ -34,7 +35,7 @@ func InitRouter(r *gin.Engine) {
 	//apiRouter.GET("/favorite/list/", controller.FavoriteList)
 	//评论
 	apiRouter.POST("/comment/:video_id/action/", controller.AddVideoComment)
-	apiRouter.POST("/videos/:video_id/like", controller.LikeVideo)
+	apiRouter.POST("/videos/:video_id/like", jwt.Auth(), controller.LikeVideo)
 	apiRouter.POST("/videos/:video_id/favorite", controller.FavoriteVideo)
 	apiRouter.POST("/videos/:video_id/share", controller.ShareVideo)
 	apiRouter.POST("/comments/:comment_id/reply", controller.ReplyToComment)

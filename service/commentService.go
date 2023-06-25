@@ -7,4 +7,5 @@ type CommentService interface {
 
 // 视频评论结构体
 type Comment struct {
+	ctt interface{}
 }
